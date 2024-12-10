@@ -12,6 +12,9 @@ import (
 	"golang.org/x/crypto/ripemd160"
 )
 
+
+//Hash multiple times?
+
 // GeneratePrivateKey generates a private key using SHA256 on the given passphrase
 func GeneratePrivateKey(passphrase string) []byte {
 	hash := sha256.Sum256([]byte(passphrase))
