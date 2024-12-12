@@ -14,6 +14,8 @@ import (
 
 
 //Hash multiple times?
+// 离线签名
+// blockchain.info api 发射？
 
 // GeneratePrivateKey generates a private key using SHA256 on the given passphrase
 func GeneratePrivateKey(passphrase string) []byte {
