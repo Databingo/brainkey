@@ -1,21 +1,16 @@
+
 package main
 
 import (
-	//"crypto/ecdsa"
-	"crypto/elliptic"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
 	"log"
 
+	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcutil/base58"
 	"golang.org/x/crypto/ripemd160"
 )
-
-
-// Hash multiple times?
-// 离线签名
-// blockchain.info api 发射？
 
 // GeneratePrivateKey generates a private key using SHA256 on the given passphrase
 func GeneratePrivateKey(passphrase string) []byte {
@@ -24,11 +19,12 @@ func GeneratePrivateKey(passphrase string) []byte {
 }
 
 // PublicKeyFromPrivateKey generates the public key from the given private key
-func PublicKeyFromPrivateKey(privateKey []byte) []byte {
-	curve := elliptic.P256()
-	x, y := curve.ScalarBaseMult(privateKey)
-	pubKey := append(x.Bytes(), y.Bytes()...)
-	return pubKey
+func PublicKeyFromPrivateKey(privateKey []byte, compressed bool) []byte {
+	privKey, _ := btcec.PrivKeyFromBytes(btcec.S256(), privateKey)
+	if compressed {
+		return privKey.PubKey().SerializeCompressed()
+	}
+	return privKey.PubKey().SerializeUncompressed()
 }
 
 // GenerateAddress generates a Bitcoin address from a public key
@@ -57,8 +53,32 @@ func GenerateAddress(publicKey []byte) string {
 	return address
 }
 
+// GenerateWIF generates a WIF for the given private key
+func GenerateWIF(privateKey []byte, compressed bool) string {
+	// Step 1: Add the mainnet prefix (0x80 for mainnet)
+	prefix := []byte{0x80}
+	extendedKey := append(prefix, privateKey...)
+
+	// Step 2: Optionally add a compression byte (if key is compressed)
+	if compressed {
+		extendedKey = append(extendedKey, 0x01)
+	}
+
+	// Step 3: Calculate the checksum
+	firstSHA := sha256.Sum256(extendedKey)
+	secondSHA := sha256.Sum256(firstSHA[:])
+	checksum := secondSHA[:4]
+
+	// Step 4: Append the checksum to the extended key
+	finalKey := append(extendedKey, checksum...)
+
+	// Step 5: Encode the result using Base58
+	wif := base58.Encode(finalKey)
+	return wif
+}
+
 func main() {
-	// Get user input
+	// Input passphrase
 	fmt.Print("Enter a passphrase for your brain wallet: ")
 	var passphrase string
 	fmt.Scanln(&passphrase)
@@ -67,11 +87,18 @@ func main() {
 	privateKey := GeneratePrivateKey(passphrase)
 	fmt.Printf("Private Key (hex): %s\n", hex.EncodeToString(privateKey))
 
+	// Generate WIF
+	compressed := true // Use compressed key format
+	wif := GenerateWIF(privateKey, compressed)
+	fmt.Println("WIF:", wif)
+
 	// Generate public key
-	publicKey := PublicKeyFromPrivateKey(privateKey)
+	publicKey := PublicKeyFromPrivateKey(privateKey, compressed)
 	fmt.Printf("Public Key (hex): %s\n", hex.EncodeToString(publicKey))
+	publicKey_un := PublicKeyFromPrivateKey(privateKey, false)
+	fmt.Printf("Public key uncompressed (hex): %s\n", hex.EncodeToString(publicKey_un))
 
 	// Generate Bitcoin address
 	address := GenerateAddress(publicKey)
-	fmt.Printf("Bitcoin Address: %s\n", address)
+	fmt.Printf("Bitcoin Address compressed: %s\n", address)
 }
