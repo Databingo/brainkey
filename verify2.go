@@ -44,7 +44,6 @@ func main() {
 	fmt.Printf("Publick key compressed hex: %s\n", hex.EncodeToString(compressedPk))
 
 
-
 	// Optional: Generate Ethereum address from public key
 	//address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
 	//fmt.Printf("Ethereum Address: %s\n", address)

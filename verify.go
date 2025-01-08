@@ -71,8 +71,8 @@ func main() {
 
 	fmt.Printf("Private Key (hex): %x\n", privateKey)
 	fmt.Printf("Private Key (decimal): %d\n", new(big.Int).SetBytes(privateKey))
-	fmt.Printf("Private Key (WIF): %s\n", encodePrivateKey(privateKey))
 	fmt.Printf("Compressed Private Key (hex): %x\n", compressedPrivateKey)
+	fmt.Printf("Private Key (WIF): %s\n", encodePrivateKey(privateKey))
 	fmt.Printf("Compressed Private Key (WIF): %s\n", encodePrivateKey(compressedPrivateKey))
 
 	s256 := secp256k1.S256()
