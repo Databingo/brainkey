@@ -90,15 +90,25 @@ func main() {
 	// Generate WIF
 	compressed := true // Use compressed key format
 	wif := GenerateWIF(privateKey, compressed)
-	fmt.Println("WIF:", wif)
+	fmt.Println("WIF compressed:", wif)
+
+	compressed = false 
+	wif_un := GenerateWIF(privateKey, compressed)
+	fmt.Println("WIF uncompressed:", wif_un)
+
 
 	// Generate public key
-	publicKey := PublicKeyFromPrivateKey(privateKey, compressed)
-	fmt.Printf("Public Key (hex): %s\n", hex.EncodeToString(publicKey))
+	publicKey := PublicKeyFromPrivateKey(privateKey, true)
+	fmt.Printf("Public Key compressed (hex): %s\n", hex.EncodeToString(publicKey))
 	publicKey_un := PublicKeyFromPrivateKey(privateKey, false)
 	fmt.Printf("Public key uncompressed (hex): %s\n", hex.EncodeToString(publicKey_un))
 
-	// Generate Bitcoin address
+	// Generate Bitcoin address uncompressed
+	address_un := GenerateAddress(publicKey_un)
+	fmt.Printf("Bitcoin Address uncompressed: %s\n", address_un)
+
+	// Generate Bitcoin address compressed
 	address := GenerateAddress(publicKey)
 	fmt.Printf("Bitcoin Address compressed: %s\n", address)
+
 }
