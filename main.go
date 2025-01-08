@@ -13,7 +13,7 @@ import (
 )
 
 
-//Hash multiple times?
+// Hash multiple times?
 // 离线签名
 // blockchain.info api 发射？
 
