@@ -1,4 +1,3 @@
-
 package main
 
 import (
@@ -6,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcutil/base58"
@@ -82,13 +82,17 @@ func main() {
 	fmt.Print("Enter a passphrase for your brain wallet: ")
 	var passphrase string
 	fmt.Scanln(&passphrase)
+	if len(passphrase) < 32 {
+		fmt.Println("Too short, at least 32 characters please")
+		os.Exit(1)
+	}
 
 	// Generate private key
 	privateKey := GeneratePrivateKey(passphrase)
 	fmt.Printf("Private Key (hex): %s\n", hex.EncodeToString(privateKey))
 
 	// Generate WIF
-	compressed := false 
+	compressed := false
 	wif_un := GenerateWIF(privateKey, compressed)
 	fmt.Println("WIF uncompressed:", wif_un)
 

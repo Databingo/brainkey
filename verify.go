@@ -10,7 +10,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
-
+	"os"
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"golang.org/x/crypto/ripemd160"
@@ -63,6 +63,10 @@ func main() {
 	fmt.Print("Enter a passphrase for your brain wallet: ")
 	var passphrase string
 	fmt.Scanln(&passphrase)
+	if len(passphrase) < 32 {
+		fmt.Println("Too short, at least 32 characters please")
+		os.Exit(1)
+	}
 
 	hash := sha256.Sum256([]byte(passphrase))
 	privateKey := hash[:]
