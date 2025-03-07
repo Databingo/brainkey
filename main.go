@@ -79,7 +79,7 @@ func GenerateWIF(privateKey []byte, compressed bool) string {
 
 func main() {
 	// Input passphrase
-	fmt.Print("Enter a passphrase for your brain wallet, make sure it's easy for you to remember and hard for other to guess: ")
+	fmt.Print("Enter a passphrase for your brain wallet, make sure it's easy to remember but hard for other to guess: ")
 	var passphrase string
 	fmt.Scanln(&passphrase)
 	if len(passphrase) < 32 {
